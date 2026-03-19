@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-emby_inspector}
+      POSTGRES_USER: ${POSTGRES_USER:-emby}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-emby_change_me}
+      TZ: ${TZ:-Asia/Shanghai}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  app:
+    build: .
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      APP_PASSWORD: ${APP_PASSWORD}
+      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:8787}
+      TG_BOT_TOKEN: ${TG_BOT_TOKEN:-}
+      TG_CHAT_ID: ${TG_CHAT_ID:-}
+      WEBHOOK_URL: ${WEBHOOK_URL:-}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      TZ: ${TZ:-Asia/Shanghai}
+      # allow optional override for docker DNS issues
+      EMBY_CONNECT_TIMEOUT_SEC: ${EMBY_CONNECT_TIMEOUT_SEC:-10}
+      # Ingest rules for mode(1): semicolon separated, any match => enqueue
+      # examples: hasurl;prefix:/add;contains:115;contains:123
+      PIPELINE_INGEST_RULES: ${PIPELINE_INGEST_RULES:-hasurl;prefix:/add;prefix:/strm;prefix:/organize}
+      PIPELINE_INGEST_SECRET: ${PIPELINE_INGEST_SECRET:-}
+      PIPELINE_INGEST_ALLOWED_CHATS: ${PIPELINE_INGEST_ALLOWED_CHATS:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - /root/.openclaw/workspace/secrets:/secrets:ro
+    ports:
+      - "8787:8787"
+
+volumes:
+  pg_data:

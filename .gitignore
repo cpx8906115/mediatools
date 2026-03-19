@@ -1,0 +1,7 @@
+emby-inspector/.env
+emby-inspector/backups/
+emby-inspector/pg_data/
+telegram-communication-bot/.env
+telegram-communication-bot/data/
+secrets/
+**/__pycache__/

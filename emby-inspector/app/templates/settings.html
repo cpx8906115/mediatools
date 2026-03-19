@@ -1,0 +1,33 @@
+{% extends "_layout.html" %}
+{% block content %}
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold">设置</h1>
+      <div class="text-sm text-slate-400">Emby 连接参数</div>
+    </div>
+  </div>
+
+  {% if updated %}
+    <div class="mt-4 text-sm text-green-300">已保存</div>
+  {% endif %}
+  {% if test_msg %}
+    <div class="mt-2 text-sm {% if err %}text-red-300{% else %}text-slate-300{% endif %}">连通性测试：{{ test_msg }}</div>
+  {% endif %}
+
+  <div class="mt-6 bg-slate-900 border border-slate-800 rounded-xl p-4">
+    <form class="space-y-4" method="post" action="/settings">
+      <div>
+        <div class="text-sm text-slate-300">Emby Base URL</div>
+        <input name="emby_base_url" value="{{ emby_url }}" class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800" placeholder="http://127.0.0.1:8096" />
+      </div>
+      <div>
+        <div class="text-sm text-slate-300">Emby API Key</div>
+        <div class="text-xs text-slate-400 mt-1">当前：{{ emby_key_masked or '未设置' }}</div>
+        <input name="emby_api_key" class="mt-1 w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800" placeholder="粘贴新的 API key" />
+      </div>
+      <button class="px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500">保存</button>
+    </form>
+  </div>
+
+  <p class="mt-6 text-xs text-slate-500">下一步：把网盘/转存相关配置也放到这里。</p>
+{% endblock %}

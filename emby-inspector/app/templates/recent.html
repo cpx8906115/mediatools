@@ -1,0 +1,61 @@
+{% extends "_layout.html" %}
+{% block content %}
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold">最近播放/历史</h1>
+      <div class="text-sm text-slate-400">合并：播放历史 + 当前会话</div>
+    </div>
+  </div>
+
+  {% if err %}
+    <div class="mt-4 text-sm text-red-300">拉取失败：{{ err }}</div>
+  {% endif %}
+
+  <div class="mt-6 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+    <div class="grid grid-cols-12 gap-2 px-4 py-2 text-xs text-slate-400 border-b border-slate-800">
+      <div class="col-span-2">来源</div>
+      <div class="col-span-5">内容</div>
+      <div class="col-span-2">时间/用户</div>
+      <div class="col-span-2">设备</div>
+      <div class="col-span-1">转码</div>
+    </div>
+
+    {% for it in items %}
+      <div class="grid grid-cols-12 gap-2 px-4 py-3 text-sm border-b border-slate-800 last:border-b-0">
+        <div class="col-span-2 text-slate-200">{{ '历史' if it.kind == 'history' else '会话' }}</div>
+
+        <div class="col-span-5 flex gap-3">
+          {% set p = (emby_api_base ~ '/Items/' ~ it.id ~ '/Images/Primary?maxWidth=160') if (emby_api_base and it.id) else '' %}
+          {% if p %}
+            <img src="{{ p }}" class="w-10 h-14 rounded bg-slate-950 border border-slate-800 object-cover" loading="lazy" />
+          {% else %}
+            <div class="w-10 h-14 rounded bg-slate-950 border border-slate-800"></div>
+          {% endif %}
+          <div>
+            <div class="font-medium break-words">{{ it.title }}</div>
+            {% if it.series %}
+              <div class="text-xs text-slate-400 break-words">{{ it.series }} 第{{ it.season }}季 · 第{{ it.episode }}集</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="col-span-2 text-slate-300">
+          {% if it.kind == 'history' %}
+            <div class="text-xs break-words">{{ it.played_at or '-' }}</div>
+          {% else %}
+            <div class="break-words">{{ it.user }}</div>
+            <div class="text-xs text-slate-500 break-words">{{ it.client }}</div>
+          {% endif %}
+        </div>
+        <div class="col-span-2 text-slate-300 break-words">{{ it.device or '-' }}</div>
+        <div class="col-span-1 text-slate-300">{{ '是' if it.is_transcoding else '-' }}</div>
+      </div>
+    {% endfor %}
+
+    {% if items|length == 0 %}
+      <div class="px-4 py-6 text-sm text-slate-400">暂无播放历史/会话数据。</div>
+    {% endif %}
+  </div>
+
+  <p class="mt-6 text-xs text-slate-500">说明：优先展示播放历史（/Playback/Recent），并追加当前会话（/Sessions）。若 Emby 未提供播放历史接口，会自动退化为只显示当前会话。</p>
+{% endblock %}
