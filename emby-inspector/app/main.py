@@ -15,7 +15,7 @@ from .jobs import start_scheduler
 from .db import AsyncSessionLocal
 from .storage import kv_get, kv_set
 
-app = FastAPI(title="Emby Inspector")
+app = FastAPI(title="mediatools")
 app.add_middleware(SessionMiddleware, secret_key=settings.session_secret)
 
 templates = Jinja2Templates(directory="app/templates")
@@ -30,8 +30,10 @@ def require_login(request: Request) -> None:
 @app.on_event("startup")
 async def _startup() -> None:
     await init_db()
-    # bootstrap password into DB if not set
+    # bootstrap credentials into DB if not set
     async with AsyncSessionLocal() as s:
+        if not (await kv_get(s, "app_username")):
+            await kv_set(s, "app_username", "admin")
         if not (await kv_get(s, "app_password")):
             await kv_set(s, "app_password", settings.app_password)
     start_scheduler()
@@ -43,13 +45,19 @@ async def login_page(request: Request):
 
 
 @app.post("/login")
-async def login(request: Request, password: str = Form(...)):
-    # password is stored in DB (kv_settings: app_password)
+async def login(request: Request, username: str = Form(...), password: str = Form(...)):
+    # credentials are stored in DB (kv_settings)
     async with AsyncSessionLocal() as s:
-        current = await kv_get(s, "app_password")
-    current = current or settings.app_password
+        stored_user = await kv_get(s, "app_username")
+        stored_pass = await kv_get(s, "app_password")
 
-    if secrets.compare_digest(password, current):
+    stored_user = stored_user or "admin"
+    stored_pass = stored_pass or settings.app_password
+
+    ok_user = secrets.compare_digest((username or "").strip(), stored_user)
+    ok_pass = secrets.compare_digest(password, stored_pass)
+
+    if ok_user and ok_pass:
         request.session["authed"] = True
         return RedirectResponse(url="/", status_code=303)
     return RedirectResponse(url="/login?bad=1", status_code=303)

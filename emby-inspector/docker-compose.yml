@@ -32,11 +32,13 @@ services:
       PIPELINE_INGEST_RULES: ${PIPELINE_INGEST_RULES:-hasurl;prefix:/add;prefix:/strm;prefix:/organize}
       PIPELINE_INGEST_SECRET: ${PIPELINE_INGEST_SECRET:-}
       PIPELINE_INGEST_ALLOWED_CHATS: ${PIPELINE_INGEST_ALLOWED_CHATS:-}
+      TMDB_API_KEY: ${TMDB_API_KEY:-}
     depends_on:
       db:
         condition: service_healthy
     volumes:
       - /root/.openclaw/workspace/secrets:/secrets:ro
+      - ./strm-out:/app/strm-out
     ports:
       - "8787:8787"
 

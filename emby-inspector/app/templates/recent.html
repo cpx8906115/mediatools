@@ -12,45 +12,109 @@
   {% endif %}
 
   <div class="mt-6 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-    <div class="grid grid-cols-12 gap-2 px-4 py-2 text-xs text-slate-400 border-b border-slate-800">
-      <div class="col-span-2">来源</div>
-      <div class="col-span-5">内容</div>
-      <div class="col-span-2">时间/用户</div>
-      <div class="col-span-2">设备</div>
-      <div class="col-span-1">转码</div>
-    </div>
 
-    {% for it in items %}
-      <div class="grid grid-cols-12 gap-2 px-4 py-3 text-sm border-b border-slate-800 last:border-b-0">
-        <div class="col-span-2 text-slate-200">{{ '历史' if it.kind == 'history' else '会话' }}</div>
+    {# Desktop table #}
+    <div class="hidden md:block">
+      <div class="grid grid-cols-12 gap-2 px-4 py-2 text-xs text-slate-400 border-b border-slate-800">
+        <div class="col-span-2">来源</div>
+        <div class="col-span-5">内容</div>
+        <div class="col-span-2">时间/用户</div>
+        <div class="col-span-2">设备</div>
+        <div class="col-span-1">转码</div>
+      </div>
 
-        <div class="col-span-5 flex gap-3">
-          {% set p = (emby_api_base ~ '/Items/' ~ it.id ~ '/Images/Primary?maxWidth=160') if (emby_api_base and it.id) else '' %}
-          {% if p %}
-            <img src="{{ p }}" class="w-10 h-14 rounded bg-slate-950 border border-slate-800 object-cover" loading="lazy" />
-          {% else %}
-            <div class="w-10 h-14 rounded bg-slate-950 border border-slate-800"></div>
-          {% endif %}
-          <div>
-            <div class="font-medium break-words">{{ it.title }}</div>
-            {% if it.series %}
-              <div class="text-xs text-slate-400 break-words">{{ it.series }} 第{{ it.season }}季 · 第{{ it.episode }}集</div>
+      {% for it in items %}
+        <div class="grid grid-cols-12 gap-2 px-4 py-3 text-sm border-b border-slate-800 last:border-b-0 hover:bg-slate-950">
+          <div class="col-span-2">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border border-slate-700
+              {% if it.kind == 'history' %}bg-slate-950 text-slate-200{% else %}bg-indigo-950 text-indigo-200{% endif %}">
+              <span class="inline-block w-1.5 h-1.5 rounded-full {% if it.kind == 'history' %}bg-slate-400{% else %}bg-indigo-400{% endif %}"></span>
+              {{ '历史' if it.kind == 'history' else '正在播放' }}
+            </span>
+          </div>
+
+          <div class="col-span-5 flex gap-3 min-w-0">
+            {% set p = (emby_api_base ~ '/Items/' ~ it.id ~ '/Images/Primary?maxWidth=200') if (emby_api_base and it.id) else '' %}
+            {% if p %}
+              <img src="{{ p }}" class="w-12 h-16 rounded-lg bg-slate-950 border border-slate-800 object-cover" loading="lazy" />
+            {% else %}
+              <div class="w-12 h-16 rounded-lg bg-slate-950 border border-slate-800"></div>
+            {% endif %}
+            <div class="min-w-0">
+              <div class="font-medium text-slate-100 break-words line-clamp-1">{{ it.title }}</div>
+              {% if it.series %}
+                <div class="text-xs text-slate-400 break-words line-clamp-1">{{ it.series }} · S{{ '%02d'|format(it.season or 0) }}E{{ '%02d'|format(it.episode or 0) }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="col-span-2 text-slate-300">
+            {% if it.kind == 'history' %}
+              <div class="text-xs break-words">{{ it.played_at or '-' }}</div>
+            {% else %}
+              <div class="break-words">{{ it.user }}</div>
+              <div class="text-xs text-slate-500 break-words">{{ it.client }}</div>
+            {% endif %}
+          </div>
+
+          <div class="col-span-2 text-slate-300 break-words">{{ it.device or '-' }}</div>
+
+          <div class="col-span-1">
+            {% if it.is_transcoding %}
+              <span class="inline-flex px-2 py-0.5 rounded-full text-xs bg-amber-950 text-amber-200 border border-amber-900">转码</span>
+            {% else %}
+              <span class="text-slate-500 text-xs">-</span>
             {% endif %}
           </div>
         </div>
+      {% endfor %}
+    </div>
 
-        <div class="col-span-2 text-slate-300">
-          {% if it.kind == 'history' %}
-            <div class="text-xs break-words">{{ it.played_at or '-' }}</div>
-          {% else %}
-            <div class="break-words">{{ it.user }}</div>
-            <div class="text-xs text-slate-500 break-words">{{ it.client }}</div>
-          {% endif %}
+    {# Mobile cards #}
+    <div class="md:hidden divide-y divide-slate-800">
+      {% for it in items %}
+        {% set p = (emby_api_base ~ '/Items/' ~ it.id ~ '/Images/Primary?maxWidth=240') if (emby_api_base and it.id) else '' %}
+        <div class="px-4 py-4">
+          <div class="flex items-start gap-3">
+            {% if p %}
+              <img src="{{ p }}" class="w-16 h-24 rounded-lg bg-slate-950 border border-slate-800 object-cover flex-none" loading="lazy" />
+            {% else %}
+              <div class="w-16 h-24 rounded-lg bg-slate-950 border border-slate-800 flex-none"></div>
+            {% endif %}
+
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center justify-between gap-2">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border border-slate-700
+                  {% if it.kind == 'history' %}bg-slate-950 text-slate-200{% else %}bg-indigo-950 text-indigo-200{% endif %}">
+                  <span class="inline-block w-1.5 h-1.5 rounded-full {% if it.kind == 'history' %}bg-slate-400{% else %}bg-indigo-400{% endif %}"></span>
+                  {{ '历史' if it.kind == 'history' else '正在播放' }}
+                </span>
+
+                {% if it.is_transcoding %}
+                  <span class="inline-flex px-2 py-0.5 rounded-full text-xs bg-amber-950 text-amber-200 border border-amber-900">转码</span>
+                {% endif %}
+              </div>
+
+              <div class="mt-2 text-sm font-semibold text-slate-100 line-clamp-2">{{ it.title }}</div>
+
+              {% if it.series %}
+                <div class="mt-1 text-xs text-slate-400 line-clamp-1">{{ it.series }} · S{{ '%02d'|format(it.season or 0) }}E{{ '%02d'|format(it.episode or 0) }}</div>
+              {% endif %}
+
+              <div class="mt-2 grid grid-cols-2 gap-x-2 gap-y-1 text-xs text-slate-400">
+                {% if it.kind == 'history' %}
+                  <div class="col-span-2">时间：{{ it.played_at or '-' }}</div>
+                {% else %}
+                  <div>用户：{{ it.user or '-' }}</div>
+                  <div class="text-right">客户端：{{ it.client or '-' }}</div>
+                {% endif %}
+                <div class="col-span-2">设备：{{ it.device or '-' }}</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="col-span-2 text-slate-300 break-words">{{ it.device or '-' }}</div>
-        <div class="col-span-1 text-slate-300">{{ '是' if it.is_transcoding else '-' }}</div>
-      </div>
-    {% endfor %}
+      {% endfor %}
+    </div>
 
     {% if items|length == 0 %}
       <div class="px-4 py-6 text-sm text-slate-400">暂无播放历史/会话数据。</div>

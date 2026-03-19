@@ -52,6 +52,8 @@ async def settings_page(request: Request, session: AsyncSession = Depends(get_se
     if emby_key:
         masked = (emby_key[:4] + "…" + emby_key[-4:]) if len(emby_key) >= 8 else "****"
 
+    app_user = await kv_get(session, "app_username") or "admin"
+
     test_msg = request.query_params.get("test")
     err = request.query_params.get("err")
 
@@ -61,6 +63,7 @@ async def settings_page(request: Request, session: AsyncSession = Depends(get_se
             "request": request,
             "emby_url": emby_url,
             "emby_key_masked": masked,
+            "app_username": app_user,
             "updated": request.query_params.get("updated") == "1",
             "test_msg": test_msg,
             "err": err,

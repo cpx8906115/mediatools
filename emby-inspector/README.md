@@ -1,10 +1,6 @@
 # Emby Inspector (MVP)
 
-FastAPI + Jinja2 + Tailwind UI for Emby analytics.
-
-- 中文说明：see [README.zh-CN.md](README.zh-CN.md)
-
-Features:
+FastAPI + Jinja2 + Tailwind UI for Emby analytics:
 - Recent plays
 - Library growth (daily snapshots)
 - Settings page (update Emby base URL + API key without redeploy)

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{ title or 'Emby Inspector' }}</title>
+    <title>{{ title or 'mediatools' }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       /* simple scrollbar */
@@ -30,7 +30,7 @@
           <button id="navOpen" class="px-2 py-1 rounded-lg border border-slate-800 bg-slate-900 text-slate-200" aria-label="Open navigation">
             ☰
           </button>
-          <a href="/" class="text-base font-semibold tracking-tight">Emby Inspector</a>
+          <a href="/" class="text-base font-semibold tracking-tight">mediatools</a>
           <div class="flex items-center gap-3">
             <a class="text-sm text-slate-300 hover:text-white" href="/settings">设置</a>
           </div>
@@ -43,7 +43,7 @@
       <!-- Sidebar -->
       <aside id="sidebar" class="hidden md:block fixed md:static inset-y-0 left-0 z-50 w-72 md:w-64 md:flex-shrink-0 border-r border-slate-800 bg-slate-950 overflow-y-auto">
         <div class="px-4 py-4 flex items-center justify-between">
-          <a href="/" class="text-lg font-semibold tracking-tight">Emby Inspector</a>
+          <a href="/" class="text-lg font-semibold tracking-tight">mediatools</a>
           <button id="navClose" class="md:hidden px-2 py-1 rounded-lg border border-slate-800 bg-slate-900 text-slate-200" aria-label="Close navigation">✕</button>
         </div>
 
@@ -60,7 +60,6 @@
             {{ nav_item('/growth', '库增长') }}
             {{ nav_item('/tasks', '任务中心') }}
             {{ nav_item('/settings', '设置') }}
-            {{ nav_item('/password', '修改密码') }}
           </div>
 
           <div class="mt-4 hidden md:block">
