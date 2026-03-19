@@ -106,6 +106,24 @@ make run
 | `/clear <id>` | Clear a user's conversation | `/clear 123456789` |
 | `/reset <id>` | Reset a user's topic (fix deleted topic issues) | `/reset 123456789` |
 
+## Integrate with emby-inspector (optional ingest)
+
+If you also deploy `emby-inspector`, this bot can forward matching messages into the ingest endpoint (`/api/ingest/tg`) so they appear in the task center.
+
+### Bot side (.env)
+
+- `PIPELINE_INGEST_URL` (example: `http://172.17.0.1:8787/api/ingest/tg`)
+- `PIPELINE_INGEST_RULES` (semicolon-separated; any match enqueues)
+- `PIPELINE_INGEST_SECRET` (recommended)
+  - Sent as header: `X-Ingest-Secret: <secret>`
+
+### emby-inspector side
+
+- `PIPELINE_INGEST_SECRET` (must match; otherwise returns 401)
+- `PIPELINE_INGEST_ALLOWED_CHATS` (optional comma-separated allowlist)
+
+---
+
 ## Configuration
 
 | Variable | Description | Default | Required |
