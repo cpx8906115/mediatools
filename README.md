@@ -8,8 +8,8 @@ Monorepo for personal media automation tools.
 
 ## Projects
 
-- `emby-inspector/` — FastAPI + PostgreSQL web console for Emby stats + task center + pipeline ingest.
-- `telegram-communication-bot/` — Telegram bot used as an entry point; forwards messages into `emby-inspector` ingest endpoint.
+- `emby-tools/` — FastAPI + PostgreSQL web console for Emby stats + task center + pipeline ingest.
+- `telegram-talk-bot/` — Telegram bot used as an entry point; forwards messages into `emby-tools` ingest endpoint.
 
 ## Notes
 

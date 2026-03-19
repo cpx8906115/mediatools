@@ -49,8 +49,8 @@
 ### Docker Compose 部署（推荐）
 
 ```bash
-git clone https://github.com/PiPiLuLuDoggy/telegram-communication-bot.git
-cd telegram-communication-bot
+git clone https://github.com/PiPiLuLuDoggy/telegram-talk-bot.git
+cd telegram-talk-bot
 
 cp .env.example .env
 ```
@@ -106,33 +106,6 @@ make run
 | `/clear <id>` | 清理用户对话 | `/clear 123456789` |
 | `/reset <id>` | 重置用户话题（修复话题删除问题） | `/reset 123456789` |
 
-## 对接 emby-inspector（消息入队，可选）
-
-如果你在同一台服务器上部署了 `emby-inspector`，可以让本机器人把满足规则的消息转发到 emby-inspector 的入队接口 `/api/ingest/tg`，从而进入任务中心。
-
-### 1) 机器人侧配置（本项目 `.env`）
-
-新增/设置以下环境变量：
-
-- `PIPELINE_INGEST_URL`：入队地址（Docker 场景通常是宿主机网关）
-  - 示例：`http://172.17.0.1:8787/api/ingest/tg`
-- `PIPELINE_INGEST_RULES`：入队过滤规则（`;` 分隔，任意匹配即入队）
-  - 示例：`hasurl;prefix:/add;prefix:/strm;prefix:/organize`
-- `PIPELINE_INGEST_SECRET`：入队密钥（可选但强烈建议）
-  - 机器人会自动以 Header 发送：`X-Ingest-Secret: <secret>`
-
-### 2) emby-inspector 侧配置（`emby-inspector/.env`）
-
-- `PIPELINE_INGEST_SECRET`：必须与机器人侧一致（启用后，不带/不对会 401）
-- `PIPELINE_INGEST_ALLOWED_CHATS`：允许入队的 chat_id 白名单（逗号分隔，可选）
-
-### 3) 验证
-
-- 给 bot 发一条带链接的消息（或满足你的规则）
-- 打开 emby-inspector → 任务中心（/tasks）应出现 `tg_message` 任务
-
----
-
 ## 配置参考
 
 | 变量 | 说明 | 默认值 | 必填 |
@@ -154,7 +127,7 @@ make run
 ## 项目结构
 
 ```
-telegram-communication-bot/
+telegram-talk-bot/
 ├── cmd/bot/main.go           # 入口
 ├── internal/
 │   ├── bot/bot.go            # Bot 核心（Polling / Webhook）
@@ -210,7 +183,7 @@ docker compose logs -f telegram-bot
 <summary><b>如何备份数据？</b></summary>
 
 ```bash
-docker cp telegram-communication-bot:/app/data/bot.db ./backup.db
+docker cp telegram-talk-bot:/app/data/bot.db ./backup.db
 ```
 </details>
 

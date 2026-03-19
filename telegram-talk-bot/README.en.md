@@ -49,8 +49,8 @@ User messages are automatically forwarded to an admin group; admins reply direct
 ### Deploy with Docker Compose (Recommended)
 
 ```bash
-git clone https://github.com/PiPiLuLuDoggy/telegram-communication-bot.git
-cd telegram-communication-bot
+git clone https://github.com/PiPiLuLuDoggy/telegram-talk-bot.git
+cd telegram-talk-bot
 
 cp .env.example .env
 ```
@@ -106,24 +106,6 @@ make run
 | `/clear <id>` | Clear a user's conversation | `/clear 123456789` |
 | `/reset <id>` | Reset a user's topic (fix deleted topic issues) | `/reset 123456789` |
 
-## Integrate with emby-inspector (optional ingest)
-
-If you also deploy `emby-inspector`, this bot can forward matching messages into the ingest endpoint (`/api/ingest/tg`) so they appear in the task center.
-
-### Bot side (.env)
-
-- `PIPELINE_INGEST_URL` (example: `http://172.17.0.1:8787/api/ingest/tg`)
-- `PIPELINE_INGEST_RULES` (semicolon-separated; any match enqueues)
-- `PIPELINE_INGEST_SECRET` (recommended)
-  - Sent as header: `X-Ingest-Secret: <secret>`
-
-### emby-inspector side
-
-- `PIPELINE_INGEST_SECRET` (must match; otherwise returns 401)
-- `PIPELINE_INGEST_ALLOWED_CHATS` (optional comma-separated allowlist)
-
----
-
 ## Configuration
 
 | Variable | Description | Default | Required |
@@ -145,7 +127,7 @@ If you also deploy `emby-inspector`, this bot can forward matching messages into
 ## Project Structure
 
 ```
-telegram-communication-bot/
+telegram-talk-bot/
 ├── cmd/bot/main.go           # Entrypoint
 ├── internal/
 │   ├── bot/bot.go            # Bot core (Polling / Webhook)
@@ -201,7 +183,7 @@ The user's next message will automatically create a new topic. You can also manu
 <summary><b>How to back up data?</b></summary>
 
 ```bash
-docker cp telegram-communication-bot:/app/data/bot.db ./backup.db
+docker cp telegram-talk-bot:/app/data/bot.db ./backup.db
 ```
 </details>
 
