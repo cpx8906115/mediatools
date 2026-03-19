@@ -1,8 +1,0 @@
-{% macro poster_url(emby_api_base, item) -%}
-  {# Emby image endpoint. Use Primary image if we have an Id. #}
-  {%- if emby_api_base and item and item.get('Id') -%}
-    {{ emby_api_base }}/Items/{{ item.get('Id') }}/Images/Primary?maxWidth=240
-  {%- else -%}
-    
-  {%- endif -%}
-{%- endmacro %}
