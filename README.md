@@ -2,6 +2,8 @@
 
 Monorepo for personal media automation tools.
 
+- 中文说明：see [README.zh-CN.md](README.zh-CN.md)
+
 ## Projects
 
 - `emby-inspector/` — FastAPI + PostgreSQL web console for Emby stats + task center + pipeline ingest.
