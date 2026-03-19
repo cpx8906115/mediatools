@@ -1,5 +1,7 @@
 # mediatools
 
+> 工具集名称：**mediatools**
+
 Monorepo for personal media automation tools.
 
 - 中文说明：see [README.zh-CN.md](README.zh-CN.md)
